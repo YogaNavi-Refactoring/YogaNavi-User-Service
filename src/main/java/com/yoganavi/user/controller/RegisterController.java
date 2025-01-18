@@ -65,7 +65,7 @@ public class RegisterController {
             successResponse.put("data", null);
             return ResponseEntity.ok(successResponse);
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) { // 이메일 검증 추가 필요
             // 이메일 형식이 유효하지 않은 경우
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("code", 604);
