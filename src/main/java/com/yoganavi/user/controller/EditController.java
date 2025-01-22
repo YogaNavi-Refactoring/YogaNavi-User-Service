@@ -3,11 +3,8 @@ package com.yoganavi.user.controller;
 import com.yoganavi.user.common.entity.Users;
 import com.yoganavi.user.dto.edit.UpdateDto;
 import com.yoganavi.user.service.edit.EditService;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -170,30 +167,18 @@ public class EditController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> updateInfo(@RequestBody UpdateDto updateDto,
+    public ResponseEntity<Map<String, Object>> updateInfo(
+        @RequestBody UpdateDto updateDto,
         @RequestHeader("X-User-Id") Long userId) {
+
         log.info("회원 정보 수정 id: {}", userId);
-
         Map<String, Object> response = new HashMap<>();
+
         try {
-            Users user = editService.updateUser(updateDto, userId);
+            Users updatedUser = editService.updateUser(updateDto, userId);
 
-            log.info("사용자 정보 수정 요청 :  사용자 {}", userId);
-            if (user != null) {
-                UpdateDto responseDto = new UpdateDto();
-                boolean isTeacher = user.getRole().equals("TEACHER");
-                responseDto.setImageUrl(user.getProfileImageUrl());
-                responseDto.setImageUrlSmall(user.getProfileImageUrlSmall());
-                responseDto.setNickname(user.getNickname());
-                responseDto.setTeacher(isTeacher);
-
-                if (isTeacher) {
-                    Set<String> myTags = editService.getUserHashtags(userId);
-                    List<String> tags = new ArrayList<>(myTags);
-                    responseDto.setHashTags(tags);
-                    responseDto.setContent(user.getContent());
-                }
-
+            if (updatedUser != null) {
+                UpdateDto responseDto = editService.createUpdateResponse(updatedUser);
                 response.put("message", "수정 완료");
                 response.put("data", responseDto);
                 return ResponseEntity.ok(response);
@@ -202,14 +187,12 @@ public class EditController {
                 response.put("data", new Object[]{});
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
+
         } catch (IllegalStateException e) {
-            // 보안 문제로 인해 정보 수정 불가
             log.info("회원 정보 수정 불가: {}", e.getMessage());
             Map<String, Object> errorResponse = new HashMap<>();
-
             errorResponse.put("code", 702);
             errorResponse.put("message", "잘못된 요청입니다");
-
             return ResponseEntity.badRequest().body(errorResponse);
 
         } catch (Exception e) {

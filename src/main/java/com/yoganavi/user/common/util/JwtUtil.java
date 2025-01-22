@@ -1,7 +1,7 @@
 package com.yoganavi.user.common.util;
 
 import com.yoganavi.user.common.entity.Users;
-import com.yoganavi.user.repository.UsersRepository;
+import com.yoganavi.user.common.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -9,14 +9,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
 
     public enum TokenStatus {
@@ -38,15 +37,8 @@ public class JwtUtil {
         EXPIRED
     }
 
-    private final UsersRepository userRepository;
-
-    @Autowired
-    public JwtUtil(UsersRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.access-token-expiration}")
     private long accessTokenExpiration;
@@ -108,7 +100,7 @@ public class JwtUtil {
 
     }
 
-    public int getUserIdFromToken(String bearerToken) {
+    public long getUserIdFromToken(String bearerToken) {
         String token = extractToken(bearerToken);
         Claims claims = validateToken(token);
         String email = claims.get("email", String.class);
