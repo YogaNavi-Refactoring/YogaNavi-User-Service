@@ -8,12 +8,17 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -76,6 +81,14 @@ public class Users {
     @Column(length = 512)
     private String fcmToken;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_hashtags",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "hashtag_id")
+    )
+    private Set<Hashtag> hashtags = new HashSet<>();
+
     public void addArticle(Article article) {
         articles.add(article);
         article.setUser(this);
@@ -95,5 +108,30 @@ public class Users {
     public String getRole() {
         return String.valueOf(role);
     }
+
+    public Set<Hashtag> getHashtags() {
+        return hashtags;
+    }
+
+    public void setHashtags(Set<Hashtag> hashtags) {
+        this.hashtags = hashtags;
+    }
+
+    public void addHashtag(Hashtag hashtag) {
+        if (this.hashtags == null) {
+            this.hashtags = new HashSet<>();
+        }
+        this.hashtags.add(hashtag);
+        if (hashtag.getUsers() == null) {
+            hashtag.setUsers(new HashSet<>());
+        }
+        hashtag.getUsers().add(this);
+    }
+
+    public void removeHashtag(Hashtag hashtag) {
+        this.hashtags.remove(hashtag);
+        hashtag.getUsers().remove(this);
+    }
+
 
 }
