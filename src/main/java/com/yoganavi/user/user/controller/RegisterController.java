@@ -90,6 +90,9 @@ public class RegisterController {
     public ResponseEntity<Map<String, Object>> checkAuthNumber(
         @RequestBody RegisterDto registerDto) {
 
+        log.info("인증번호 확인 요청: email={}, authNumber={}",
+            registerDto.getEmail(), registerDto.getAuthnumber());
+
         try {
             boolean isValid = registerService.validateEmailToken(
                 registerDto.getEmail(),

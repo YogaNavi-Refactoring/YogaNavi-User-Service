@@ -1,6 +1,6 @@
 spring:
   application:
-    name: lecture-service
+    name: user-service
   profiles:
     active: local
   config:
@@ -31,6 +31,48 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        enable.idempotence: true
+        transaction.timeout.ms: 10000
+        max.block.ms: 10000
+        delivery.timeout.ms: 10000
+        request.timeout.ms: 5000
+    consumer:
+      group-id: user-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.yoganavi.kafka.event"
+
+    # 토픽 설정
+    topics:
+      user-sync-result: user-sync-result
+      user-sync-result-dlq: user-sync-result-dlq
+      user-compensation: user-compensation
+      user-created: user-created
+      user-updated: user-updated
+      user-deleted: user-deleted
+      user-created-dlq: user-created-dlq
+      user-updated-dlq: user-updated-dlq
+      user-deleted-dlq: user-deleted-dlq
+      user-sync-compensation: user-sync-compensation
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+  client:
+    register-with-eureka: true
+    fetch-registry: true
 
 server:
   port: 8081
