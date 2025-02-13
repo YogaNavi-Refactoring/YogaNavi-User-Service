@@ -1,5 +1,6 @@
 package com.yoganavi.user.user.service.register;
 
+import com.yoganavi.kafka.service.KafkaProducerService;
 import com.yoganavi.user.common.entity.Users;
 import com.yoganavi.user.common.repository.UserRepository;
 import com.yoganavi.user.user.dto.register.RegisterDto;
@@ -20,6 +21,7 @@ public class RegisterServiceImpl implements RegisterService {
     private static final String PURPOSE = "회원가입";
 
     private final EmailService emailService;
+    private final KafkaProducerService kafkaEventService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -73,6 +75,9 @@ public class RegisterServiceImpl implements RegisterService {
             emailService.clearVerificationStatus(registerDto.getEmail(), PURPOSE);
 
             log.info("사용자 등록 완료: 사용자 ID {}", saveMember.getUserId());
+
+            kafkaEventService.publishUserCreatedEvent(saveMember);
+
             return saveMember;
 
         } catch (IllegalArgumentException | IllegalStateException e) {

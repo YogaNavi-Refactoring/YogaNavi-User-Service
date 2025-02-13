@@ -23,7 +23,8 @@ public class EmailService {
         log.info("{} 인증 토큰 전송 시작: {}", purpose, email);
 
         try {
-            String token = generateToken();
+//            String token = generateToken();
+            String token = "123456";
             String redisKey = getRedisKey(email, purpose);
 
             // 기존 토큰이 있다면 삭제

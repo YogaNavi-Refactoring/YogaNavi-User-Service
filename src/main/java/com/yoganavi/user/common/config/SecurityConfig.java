@@ -41,42 +41,43 @@ public class SecurityConfig {
 
         // URL 기반 권한 부여 설정
         http.authorizeHttpRequests((requests) -> requests
-            // 선생만 접근 가능
-            .requestMatchers("/mypage/notification/write",
-                "/mypage/notification/update/**",
-                "/mypage/notification/delete/**",
-                "/mypage/live-lecture-manage/**",
-                "/mypage/recorded-lecture/list",
-                "/mypage/recorded-lecture/create",
-                "/mypage/recorded-lecture/detail/**",
-                "/mypage/recorded-lecture/update/**",
-                "/mypage/recorded-lecture/delete").hasRole("TEACHER")
-
-            // 모든 인증된 사용자
-            .requestMatchers("/mypage/notification/list",
-                "/fcm",
-                "/mypage/course-history",
-                "/home",
-                "/mypage/info",
-                "/mypage/check",
-                "/mypage/update",
-                "/mylogout",
-                "/delete",
-                "/mypage/recorded-lecture/likelist",
-                "/recorded-lecture/detail/**",
-                "/recorded-lecture/like/**",
-                "/recorded-lecture/sort/**",
-                "/recorded-lecture/search/**",
-                "/teacher/**").hasAnyRole("TEACHER", "STUDENT")
-
-            // 모두에게 열려있다!
-            .requestMatchers("/members/**",
-                "/is-on").permitAll()
-
-            .requestMatchers("/home/update").hasRole("SIGNAL")
-
-            // 그 외의 경우
-            .anyRequest().hasAnyRole("TEACHER", "STUDENT")
+                // 선생만 접근 가능
+//            .requestMatchers("/mypage/notification/write",
+//                "/mypage/notification/update/**",
+//                "/mypage/notification/delete/**",
+//                "/mypage/live-lecture-manage/**",
+//                "/mypage/recorded-lecture/list",
+//                "/mypage/recorded-lecture/create",
+//                "/mypage/recorded-lecture/detail/**",
+//                "/mypage/recorded-lecture/update/**",
+//                "/mypage/recorded-lecture/delete").hasRole("TEACHER")
+//
+//            // 모든 인증된 사용자
+//            .requestMatchers("/mypage/notification/list",
+//                "/fcm",
+//                "/mypage/course-history",
+//                "/home",
+//                "/mypage/info",
+//                "/mypage/check",
+//                "/mypage/update",
+//                "/mylogout",
+//                "/delete",
+//                "/mypage/recorded-lecture/likelist",
+//                "/recorded-lecture/detail/**",
+//                "/recorded-lecture/like/**",
+//                "/recorded-lecture/sort/**",
+//                "/recorded-lecture/search/**",
+//                "/teacher/**").hasAnyRole("TEACHER", "STUDENT")
+//
+//            // 모두에게 열려있다!
+//            .requestMatchers("/members/**",
+//                "/is-on").permitAll()
+//
+//            .requestMatchers("/home/update").hasRole("SIGNAL")
+//
+//            // 그 외의 경우
+//            .anyRequest().hasAnyRole("TEACHER", "STUDENT")
+                .anyRequest().permitAll()
         );
 
         // HTTP 기본 인증 구성
