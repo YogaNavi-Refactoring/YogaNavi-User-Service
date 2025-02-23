@@ -14,7 +14,7 @@ public class CircuitBreakerTestController {
     @GetMapping("/delay")
     public String testDelay() throws InterruptedException {
         log.info("서킷 브레이커 테스트 - 지연 응답");
-        Thread.sleep(4000);
+        Thread.sleep(6000);
         return "서킷 브레이커 테스트 - 지연 응답";
     }
 
